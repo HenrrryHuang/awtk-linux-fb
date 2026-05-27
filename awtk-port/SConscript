@@ -31,6 +31,8 @@ elif LCD_DEVICES =='egl_for_x11' :
   SOURCES = Glob('egl_devices/x11/*.c') + SOURCES;
 elif LCD_DEVICES =='egl_for_gbm' :
   SOURCES = Glob('egl_devices/gbm/*.c') + SOURCES;
+elif LCD_DEVICES =='egl_for_rk3562' :
+  SOURCES = Glob('egl_devices/rk3562/*.c') + SOURCES;
 
 awtk_linux_fb = env.Library(os.path.join(LIB_DIR, 'awtk_linux_fb'), SOURCES)
 

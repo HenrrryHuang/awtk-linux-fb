@@ -12,7 +12,7 @@ def joinPath(root, subdir):
   return os.path.normpath(os.path.join(root, subdir))
 
 def lcd_devices_is_egl(lcd_devices):
-  if lcd_devices == 'egl_for_fsl' or lcd_devices == 'egl_for_x11' or lcd_devices == 'egl_for_gbm' or lcd_devices == 'egl_for_wayland':
+  if lcd_devices == 'egl_for_fsl' or lcd_devices == 'egl_for_x11' or lcd_devices == 'egl_for_gbm' or lcd_devices == 'egl_for_wayland' or lcd_devices == 'egl_for_rk3562':
     return True
   return False
 
@@ -37,13 +37,14 @@ EGL_WAYLAND_DIR  = joinPath(TK_LINUX_FB_ROOT, 'awtk-wayland/egl_for_wayland')
 COMMON_DIR       = joinPath(TK_LINUX_FB_ROOT, 'common')
 
 # lcd devices
-LCD_DEVICES='fb'
+# LCD_DEVICES='fb'
 # LCD_DEVICES='drm'
 # LCD_DEVICES='wayland'
 # LCD_DEVICES='egl_for_fsl'
 # LCD_DEVICES='egl_for_x11'
 # LCD_DEVICES='egl_for_gbm'
 # LCD_DEVICES='egl_for_wayland'
+LCD_DEVICES='egl_for_rk3562'
 LCD_DEVICES = compile_helper.get_value('LCD_DEVICES', LCD_DEVICES)
 
 NANOVG_BACKEND=''
@@ -133,7 +134,7 @@ TSLIB_INC_DIR=''
 #TSLIB_INC_DIR='/opt/tslib/include'
 
 #for qemu
-TOOLS_PREFIX='/opt/qemu/buildroot-2021.02.2/output/host/bin/arm-linux-'
+# TOOLS_PREFIX='/opt/qemu/buildroot-2021.02.2/output/host/bin/arm-linux-'
 
 #for poky cortex-a9
 #TOOLS_PREFIX='/opt/poky/1.7/sysroots/x86_64-pokysdk-linux/usr/bin/arm-poky-linux-gnueabi/arm-poky-linux-gnueabi-'
@@ -145,6 +146,11 @@ TOOLS_PREFIX='/opt/qemu/buildroot-2021.02.2/output/host/bin/arm-linux-'
 
 #for pc build
 #TOOLS_PREFIX=''
+
+#for rk3562 build
+TSLIB_LIB_DIR=''
+TSLIB_INC_DIR=''
+TOOLS_PREFIX='/media/sangfor/vdb/toolchain/rk3562/xhy/host/bin/aarch64-buildroot-linux-gnu-'
 
 #for android
 #TOOLS_PREFIX='/opt/android-ndk-r20b/toolchains/llvm/prebuilt/linux-x86_64/bin/'
@@ -191,6 +197,7 @@ OS_LINKFLAGS= OS_LINKFLAGS + ' -Wl,-rpath=./bin -Wl,-rpath=./ '
 if LCD_DEVICES =='drm' :
   #for drm
   #OS_CPPPATH += ['/usr/include/libdrm']
+  OS_FLAGS=OS_FLAGS + TOOLS_PREFIX
   OS_LIBS = ['drm'] + OS_LIBS
 elif LCD_DEVICES =='wayland' :
   OS_LIBS = [ 'xkbcommon', 'wayland-client', 'wayland-cursor' ] + OS_LIBS
@@ -207,6 +214,10 @@ elif LCD_DEVICES =='egl_for_gbm' :
   OS_LIBS = [ 'drm', 'gbm', 'EGL', 'GLESv2' ] + OS_LIBS
 elif LCD_DEVICES =='egl_for_wayland' :
   OS_LIBS = [ 'xkbcommon', 'wayland-client', 'wayland-cursor', 'GLESv2', 'EGL', 'wayland-egl' ] + OS_LIBS
+elif LCD_DEVICES =='egl_for_rk3562' :
+  #for egl for rk3562 (Mali-G52 GPU via DRM/GBM)
+  OS_FLAGS=OS_FLAGS + TOOLS_PREFIX
+  OS_LIBS = [ 'drm', 'gbm', 'EGL', 'GLESv2' ] + OS_LIBS
 
 OPENGL_ANTIALIAS = compile_helper.get_value('OPENGL_ANTIALIAS', 'HW');
 if OPENGL_ANTIALIAS == 'HW':
